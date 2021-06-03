@@ -3,7 +3,7 @@ import numpy as np
 def initialize_mdp_data(num_states):
     transition_counts = np.zeros((num_states, num_states, 2))
     transition_probs = np.ones((num_states, num_states, 2)) / num_states
-    # Index zero is count of rewards being -1 , index 1 is count of total num state is reached
+    # Index zero is sum of rewards, index 1 is count of total num state is reached
     reward_counts = np.zeros((num_states, 2))
     reward = np.zeros(num_states)
     value = np.random.rand(num_states) * 0.1
@@ -34,7 +34,7 @@ def choose_action(state, mdp_data):
 
 def update_mdp_transition_counts_reward_counts(mdp_data, state, action, new_state, reward):
     mdp_data['transition_counts'][state, new_state, action] += 1
-    mdp_data['reward_counts'][new_state] += np.array([-reward, 1])
+    mdp_data['reward_counts'][new_state] += np.array([reward, 1])
 
 
 def update_mdp_transition_probs_reward(mdp_data):
@@ -50,7 +50,7 @@ def update_mdp_transition_probs_reward(mdp_data):
     for state in range(mdp_data['num_states']):
         if reward_counts[state, 1] == 0:
             continue
-        mdp_data['reward'][state] = -reward_counts[state, 0] / reward_counts[state, 1]
+        mdp_data['reward'][state] = reward_counts[state, 0] / reward_counts[state, 1]
 
 
 def update_mdp_value(mdp_data, tolerance, gamma):
